@@ -1,19 +1,47 @@
 
 public class Board {
-	String game;
-	public Board(String game){
-		this.game = game;
-		Checker[] board = new Checker[24];
-		populate(game,board);
+	Checker token=null;
+	Stack[] board;
+	
+	public Board(){
+		board =new Stack[24];
+		populate(board);
 	}
-	public void populate(String game,Checker[] board){
-		if(game.equalsIgnoreCase("Doors")){
-			System.out.println("Morrison");
-		}else if(game.equalsIgnoreCase("Run")){
-			
-		}else if(game.equalsIgnoreCase("Tapa")){
-			
-		}else System.out.println("Boy you fucked up.");
-		
+	public void populate(Stack[] board){
+		Checker whiteToken = new Checker(1,false);
+		Checker blackToken = new Checker(24,true);
+		for(int i=0;i<15;i++){
+			board[1].push(whiteToken);
+			board[24].push(blackToken);
+		}
+	}
+	public void moveCh(int stPos,int fnPos){
+		if(!board[stPos].isEmpty() && available(stPos,fnPos)){
+			token = board[stPos].pop();
+			board[fnPos].push(token);
+		}
+	}
+	public boolean available(int stPos, int fnPos){
+		if((stPos-fnPos)>0 && board[stPos].lastNode.color){
+			if(board[fnPos].isEmpty()){
+				return true;
+			}else if(board[fnPos].size()==1){
+				return true;
+				
+			}else if(board[fnPos].size()>1 && board[fnPos].lastNode.color){
+				return true;
+			}
+			else return false;
+		}else if((stPos-fnPos)<0 && !board[stPos].lastNode.color){
+			if(board[fnPos].isEmpty()){
+				return true;
+			}else if(board[fnPos].size()==1){
+				return true;
+				
+			}else if(board[fnPos].size()>1 && !board[fnPos].lastNode.color){
+				return true;
+			}
+			else return false;
+		}else return false;
 	}
 }
