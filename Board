@@ -1,0 +1,19 @@
+
+public class Board {
+	String game;
+	public Board(String game){
+		this.game = game;
+		Checker[] board = new Checker[24];
+		populate(game,board);
+	}
+	public void populate(String game,Checker[] board){
+		if(game.equalsIgnoreCase("Doors")){
+			System.out.println("Morrison");
+		}else if(game.equalsIgnoreCase("Run")){
+			
+		}else if(game.equalsIgnoreCase("Tapa")){
+			
+		}else System.out.println("Boy you fucked up.");
+		
+	}
+}
