@@ -8,11 +8,15 @@ public class Board {
 		populate(board);
 	}
 	public void populate(Stack[] board){
-		Checker whiteToken = new Checker(0,false);
+		Checker whiteToken = new Checker(1,false);
 		Checker blackToken = new Checker(24,true);
+		Stack st = new Stack();
+		for(int i=0 ; i<24; i++){
+			board[i] = st;
+		}
 		for(int i=0;i<15;i++){
-			board[1].push(whiteToken);
-			board[24].push(blackToken);
+			board[0].push(whiteToken);
+			board[23].push(blackToken);
 		}
 	}
 	public void moveCh(int stPos,int fnPos){
