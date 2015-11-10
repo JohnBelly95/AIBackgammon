@@ -8,7 +8,7 @@ public class Board {
 		populate(board);
 	}
 	public void populate(Stack[] board){
-		Checker whiteToken = new Checker(1,false);
+		Checker whiteToken = new Checker(0,false);
 		Checker blackToken = new Checker(24,true);
 		for(int i=0;i<15;i++){
 			board[1].push(whiteToken);
