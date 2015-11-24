@@ -1,20 +1,20 @@
-
 public class Board {
 	Checker token=null;
 	Stack[] board;
+	int wLocked,wDoor,wAlone,moves;
 	
 	public Board(){
 		board =new Stack[24];
 		populate(board);
-	}
-	public Board(Board b){
-		this.board = b.board;
+		wLocked = 20;
+		wDoor = 50;
+		wAlone = 20;
 	}
 	public void populate(Stack[] board){
 		Checker whiteToken = new Checker(1,false);
 		Checker blackToken = new Checker(24,true);
 		Stack st = new Stack();
-		for(int i=0; i<24 ;i++){
+		for(int i=0 ; i<24; i++){
 			board[i] = st;
 		}
 		for(int i=0;i<15;i++){
@@ -25,6 +25,7 @@ public class Board {
 	public void moveCh(int stPos,int fnPos){
 		if(!board[stPos].isEmpty() && available(stPos,fnPos)){
 			token = board[stPos].pop();
+			token.pos = fnPos;
 			board[fnPos].push(token);
 		}
 	}
@@ -50,5 +51,30 @@ public class Board {
 			}
 			else return false;
 		}else return false;
+	}
+	/*This method evaluates each state and returns the score.*/
+	public int evaluate(boolean clr){
+		int a = 0;
+		if(clr==true){
+			for(int i=24;i>0;i--){
+				if(board[i].firstNode.color && board[i].lastNode.color) {
+					if(board[i].size() > 1 ) a += i*board[i].size() + wDoor;
+					else a -= i*wAlone;
+				}
+				if(!board[i].firstNode.color && board[i].lastNode.color) a += (25-i)*wLocked;
+				if(board[i].firstNode.color && !board[i].lastNode.color) a += i;
+			}
+		}else{
+			for(int i=1;i<25;i++){
+				if(!board[i].firstNode.color && !board[i].lastNode.color) {
+					if(board[i].size() > 1) a -= i*board[i].size() + wDoor;
+					else a += i*wAlone;
+				}
+				if(board[i].firstNode.color && !board[i].lastNode.color) a -= i*wLocked;
+				if(!board[i].firstNode.color && board[i].lastNode.color) a += (25-i);
+				
+			}
+		}
+		return a;
 	}
 }
