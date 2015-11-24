@@ -2,6 +2,7 @@ public class Board {
 	Checker token=null;
 	Stack[] board;
 	int wLocked,wDoor,wAlone,moves;
+	int value;
 	
 	public Board(){
 		board =new Stack[24];
@@ -15,10 +16,9 @@ public class Board {
 		board = null;
 		this.value = value;
 	}
-	
-	public Board(Board b,int value){
+	public Board(Board b){
 		board = b.board;
-		this.value = value;
+		this.value = b.value;
 	}
 	
 	
