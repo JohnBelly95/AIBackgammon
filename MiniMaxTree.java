@@ -47,7 +47,7 @@ public Board Max(Board board,int d1,int d2,int depth,int alpha, int beta){
 		for(int i=0; i<21; i++){
 
 			Board minChild = new Board(Min(maxChild,luck[i][1],luck[i][2],depth + 1, alpha, beta));
-			if(minChild.getValue() > maxMove.getValue() ){
+			if(minChild.getValue() > maxMove.getValue() ){  // TRUE EINAI TO MAVRO
 				maxMove.setBoard(minChild.getBoard());
 				maxMove.setValue(minChild.getValue());
 			}
@@ -121,5 +121,3 @@ private int[][] filluck(){         // GEMIZW THN TYXH
 	}
 	return l;
 }
-
-
