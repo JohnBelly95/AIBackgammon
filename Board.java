@@ -7,11 +7,14 @@ public class Board {
 		board =new Stack[24];
 		populate(board);
 	}
+	public Board(Board b){
+		this.board = b.board;
+	}
 	public void populate(Stack[] board){
 		Checker whiteToken = new Checker(1,false);
 		Checker blackToken = new Checker(24,true);
 		Stack st = new Stack();
-		for(int i=0 ; i<24; i++){
+		for(int i=0; i<24 ;i++){
 			board[i] = st;
 		}
 		for(int i=0;i<15;i++){
