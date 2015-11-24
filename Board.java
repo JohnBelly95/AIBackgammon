@@ -10,6 +10,31 @@ public class Board {
 		wDoor = 50;
 		wAlone = 20;
 	}
+	
+	public Board(int value){
+		board = null;
+		this.value = value;
+	}
+	
+	public Board(Board b,int value){
+		board = b.board;
+		this.value = value;
+	}
+	
+	
+	public Stack[] getBoard(){
+		return board;
+	}
+	public int getValue(){
+		return value;
+	}
+	
+	public void setBoard(Stack[] b){
+		this.board = b;
+	}
+	public void setValue(int v){
+		this.value = v;
+	}
 	public void populate(Stack[] board){
 		Checker whiteToken = new Checker(1,false);
 		Checker blackToken = new Checker(24,true);
