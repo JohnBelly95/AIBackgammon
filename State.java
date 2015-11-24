@@ -1,23 +1,36 @@
 public class State {
-	private int[] move;
+	private Board move;
 	private int value;
 	private State parent;
 	private int[][] luck;
 	private Luck chance;
 	
-	public State(int[] move,int value){
+	public State(Board move,int value){
 		this.setMove(move);
 		this.setValue(value);
 		this.parent = null;
 		luck = filluck();
 		this.chance = null; 
 	}
+	
+	public State(Board move){
+		this.setMove(move);
+		this.parent = null;
+		luck = filluck();
+		this.chance = null; 
+	}
+	public State(int value){
+		this.value = value;
+		this.parent = null;
+		luck = filluck();
+		this.chance = null; 
+	}
 
-	public int[] getMove() {
+	public Board getMove() {
 		return move;
 	}
 
-	public void setMove(int[] move) {
+	public void setMove(Board move) {
 		this.move = move;
 	}
 
