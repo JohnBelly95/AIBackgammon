@@ -12,6 +12,8 @@ public class Main {
 	private static int a;
 	private static Scanner read = new Scanner(System.in);
 	
+	private static final String tut = ("Backgammon is one of the oldest board games known.<br>This implementation comes from a Greek variation called \"Πλακωτό\"<br>");
+	
 	public static void main(String[] args){
 
 		d6a = new Dice();
@@ -73,12 +75,17 @@ public class Main {
 						}
 					case "Tutorial":{
 							System.out.println("Time to print a tutorial.");
+							drawTutorial();
 							break;
 						}
 					case "Credits":{
 							System.out.println("will code for coffee.");
 							break;
 						}
+					case "Return":{
+							System.out.println("BACK I SAY!");
+							break;
+					}
 					default: System.out.println("This works. I think.");
 							break;
 				}
@@ -98,6 +105,31 @@ public class Main {
 		return b;
 	}
 	
+	public static void drawTutorial(){
+		JFrame frame = new JFrame("Tutorial");
+		
+		JPanel p = new JPanel(new BorderLayout());
+		
+		JLabel lb = new JLabel("<html><div style=\"text-align: center;\">"+tut+"</html>");
+		lb.setBorder(new EmptyBorder(10,10,10,10));
+		p.add(lb);
+		
+		JButton c = createButton("Return",KeyEvent.VK_ESCAPE);
+		c.setToolTipText("Return to previous screen");
+		c.setSize(10,50);
+		c.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		});
+		p.add(c,BorderLayout.PAGE_END);
+		
+		frame.add(p);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setBounds(710, 440, 500, 200);
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		frame.setVisible(true);
+	}
 	/*public State expectiMiniMax(int d1,int d2,boolean color){
 		for(int i=23; i>=0; i--){
 			if(b.board[i].look() != null && b.board[i].look().color == color){
