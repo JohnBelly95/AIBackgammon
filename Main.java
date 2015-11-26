@@ -35,14 +35,22 @@ public class Main {
 		bottomPanel.setBorder(new EmptyBorder(2,2,2,2));
 		
 		JLabel l1 = new JLabel("<html><div style=\"text-align: center;\">"+"Welcome"+"<br>"+"This is our Backgammon simulator"+"<br>"+"Please click a button from bellow to continue."+"</htmal>");
+		l1.setBorder(new EmptyBorder(3,9,3,3));
 		topPanel.add(l1);
 		
-		bottomPanel.add(createButton("New Game", KeyEvent.VK_N));
-		bottomPanel.add(createButton("Tutorial", KeyEvent.VK_T));
-		bottomPanel.add(createButton("Credits", KeyEvent.VK_C));
+		JButton b1 = createButton("New Game", KeyEvent.VK_N);
+		b1.setToolTipText("This will start a new game.");
+		
+		JButton b2 = createButton("Tutorial", KeyEvent.VK_T);
+		b2.setToolTipText("Read the tutorial for help");
+		
+		JButton b3 = createButton("Credits", KeyEvent.VK_C);
+		b3.setToolTipText("Thank you for playing. This is who we are.");
+		
+		bottomPanel.add(b1);
+		bottomPanel.add(b2);
+		bottomPanel.add(b3);
 		/*
-		JButton b1 = new JButton("New Game");
-		b1.setVerticalTextPosition(AbstractButton.TOP);
 		b1.setMnemonic(KeyEvent.VK_N);
 		b1.setToolTipText("This will take you to a new game of Backgammon.");
 		b1.setMargin(new Insets(8, 8, 8, 8));
@@ -95,9 +103,27 @@ public class Main {
 		b.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				System.out.println(e.getActionCommand() + " was clicked");
+				//TODO Add action on press.
+				switch(e.getActionCommand()){
+					case "New Game": {
+							System.out.println("This is something");
+							break;
+						}
+					case "Tutorial":{
+							System.out.println("Time to print a tutorial.");
+							break;
+						}
+					case "Credits":{
+							System.out.println("will code for coffee.");
+							break;
+						}
+					default: System.out.println("This works. I think.");
+							break;
+				}
 			}
 		});
 		b.setMargin(new Insets(6,6,6,6));
+		b.setMnemonic(Key);
 		InputMap im = b.getInputMap(b.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap am = b.getActionMap();
 		im.put(KeyStroke.getKeyStroke(Key, 0), "onClick");
@@ -109,15 +135,7 @@ public class Main {
 		});
 		return b;
 	}
-	//TODO Add Tutorial,Credits , etc.
-	/*public void keyPressed(KeyEvent e){
-		if(e.equals(KeyEvent.VK_T)) {
-			b1.doClick;
-			System.out.println("Tutorial should start here.");
-		}
-		if(e.equals(KeyEvent.VK_C)) System.out.println("Roll Credits Here");
-		if(e.equals(KeyEvent.VK_N)) System.out.println("Begin new game.");
-	}
+	
 	/*public State expectiMiniMax(int d1,int d2,boolean color){
 		for(int i=23; i>=0; i--){
 			if(b.board[i].look() != null && b.board[i].look().color == color){
