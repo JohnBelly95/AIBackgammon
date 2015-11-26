@@ -11,8 +11,13 @@ public class Main {
 	private static Board b;
 	private static int a;
 	private static Scanner read = new Scanner(System.in);
-	
+	public static JFrame mFrame = new JFrame("Backgammon");
+	public static JLayeredPane gBoard = new JLayeredPane();
 	private static final String tut = ("Backgammon is one of the oldest board games known.<br>This implementation comes from a Greek variation called \"Πλακωτό\"<br>");
+	public static GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+	static JMenuBar menuBar;
+	static JMenu mainMenu;
+	static JCheckBoxMenuItem debugMode;
 	
 	public static void main(String[] args){
 
@@ -71,6 +76,7 @@ public class Main {
 				switch(e.getActionCommand()){
 					case "New Game": {
 							System.out.println("This is something");
+							createBoard();
 							break;
 						}
 					case "Tutorial":{
@@ -129,6 +135,24 @@ public class Main {
 		frame.setBounds(710, 440, 500, 200);
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame.setVisible(true);
+	}
+	
+	public static void createBoard(){
+		gBoard.setSize(1024,720);
+		
+		menuBar = new JMenuBar();
+		
+		mainMenu = new JMenu("Settings");
+		mainMenu.setMnemonic(KeyEvent.VK_ESCAPE);
+		
+		debugMode = new JCheckBoxMenuItem("Debug Mode");
+		mainMenu.add(debugMode);
+
+		menuBar.add(mainMenu);
+		mFrame.setJMenuBar(menuBar);
+		mFrame.setContentPane(gBoard);
+		mFrame.setBounds(gd.getDisplayMode().getWidth()/7,gd.getDisplayMode().getHeight()/5,5*(gd.getDisplayMode().getWidth()/7),3*(gd.getDisplayMode().getHeight()/5));
+		mFrame.setVisible(true);
 	}
 	/*public State expectiMiniMax(int d1,int d2,boolean color){
 		for(int i=23; i>=0; i--){
