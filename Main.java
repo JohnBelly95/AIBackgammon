@@ -1,10 +1,12 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.imageio.*;
 
 public class Main {
 	private static Dice d6a,d6b;
@@ -15,12 +17,17 @@ public class Main {
 	public static JLayeredPane gBoard = new JLayeredPane();
 	private static final String tut = ("Backgammon is one of the oldest board games known.<br>This implementation comes from a Greek variation called \"Πλακωτό\"<br>");
 	public static GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+	private static int height = gd.getDisplayMode().getHeight();
+	private static int width = gd.getDisplayMode().getWidth();
+	private static int x = 3*(height/5)-62;
 	static JMenuBar menuBar;
 	static JMenu mainMenu;
 	static JCheckBoxMenuItem debugMode;
+	static BufferedImage img = null;
 	
 	public static void main(String[] args){
-
+		
+		
 		d6a = new Dice();
 		d6b = new Dice();
 		b = new Board();
@@ -76,7 +83,12 @@ public class Main {
 				switch(e.getActionCommand()){
 					case "New Game": {
 							System.out.println("This is something");
-							createBoard();
+							try {
+								createBoard();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 							break;
 						}
 					case "Tutorial":{
@@ -137,7 +149,8 @@ public class Main {
 		frame.setVisible(true);
 	}
 	
-	public static void createBoard(){
+	public static void createBoard() throws IOException{
+		
 		gBoard.setSize(1024,720);
 		
 		menuBar = new JMenuBar();
@@ -147,12 +160,27 @@ public class Main {
 		
 		debugMode = new JCheckBoxMenuItem("Debug Mode");
 		mainMenu.add(debugMode);
-
+		
+		img = ImageIO.read(new File("board.jpg"));
+		BufferedImage resizedImg = resizeImage(img,img.getType());
+		//ImageIO.write(resizedImg, "jpg", new File("boardR.jpg"));
+		JLabel boardPic = new JLabel(new ImageIcon(resizedImg));
+		boardPic.setBounds(((3*(width/5))-((x*145)/100)-15), 0,(x*145)/100, 3*(height/5));
+		
 		menuBar.add(mainMenu);
+		gBoard.add(boardPic);
 		mFrame.setJMenuBar(menuBar);
 		mFrame.setContentPane(gBoard);
-		mFrame.setBounds(gd.getDisplayMode().getWidth()/7,gd.getDisplayMode().getHeight()/5,5*(gd.getDisplayMode().getWidth()/7),3*(gd.getDisplayMode().getHeight()/5));
+		mFrame.setBounds(width/5,height/5,3*(width/5),3*(height/5));
 		mFrame.setVisible(true);
+	}
+	
+	private static BufferedImage resizeImage(BufferedImage originalImage, int type){
+		BufferedImage resizedImage = new BufferedImage((x*145)/100, 3*(height/5), type);
+		Graphics2D g = resizedImage.createGraphics();
+		g.drawImage(originalImage, 0, 0, (x*145)/100, x, null);
+		g.dispose();
+		return resizedImage;
 	}
 	/*public State expectiMiniMax(int d1,int d2,boolean color){
 		for(int i=23; i>=0; i--){
