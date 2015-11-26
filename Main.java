@@ -50,44 +50,6 @@ public class Main {
 		bottomPanel.add(b1);
 		bottomPanel.add(b2);
 		bottomPanel.add(b3);
-		/*
-		b1.setMnemonic(KeyEvent.VK_N);
-		b1.setToolTipText("This will take you to a new game of Backgammon.");
-		b1.setMargin(new Insets(8, 8, 8, 8));
-		b1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				//Execute when button is pressed
-				//TODO Get fucked.
-				System.out.println("You clicked the button");
-			}
-		});      
-		bottomPanel.add(b1,BorderLayout.PAGE_START);
-		
-		JButton b2 = new JButton("Tutorial");
-		b2.setVerticalTextPosition(AbstractButton.CENTER);
-		b2.setMnemonic(KeyEvent.VK_T);
-		b2.setToolTipText("View the tutorial for this game.");
-		b2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				//Execute when button is pressed
-				//TODO Add Tutorial.
-				System.out.println("You clicked the button");
-			}
-		});   
-		bottomPanel.add(b2,BorderLayout.CENTER);
-		
-		JButton b3 = new JButton("Credits");
-		b3.setVerticalTextPosition(AbstractButton.BOTTOM);
-		b3.setMnemonic(KeyEvent.VK_C);
-		b3.setToolTipText("This is who we (The creators) are. Thank you for playing.");
-		b3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				//Execute when button is pressed
-				//TODO Add Credits Window
-				System.out.println("You clicked the Credits button");
-			}
-		});   
-		bottomPanel.add(b3,BorderLayout.PAGE_END);*/
 		
 		JFrame frame = new JFrame("Game");
 		JFrame.setDefaultLookAndFeelDecorated(true);
