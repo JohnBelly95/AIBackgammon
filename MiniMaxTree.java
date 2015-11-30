@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class MinimaxTree {
+public class MiniMaxTree{
 	public static final int MAXDEPTH = 2;
 	int[][] luck = filluck();
 	public  ArrayList<Board> children;
@@ -9,9 +9,9 @@ public class MinimaxTree {
 	public Board expectiMinimax(Board parent,int d1,int d2,int depth,int alpha , int beta,boolean clr){
 		
 		if(clr){
-			return Max(parent,d1,d2,depth,alpha,beta);
+			return Max(parent,d1,d2,depth,Integer.MIN_VALUE,Integer.MAX_VALUE);
 		}else{
-			return Min(parent,d1,d2,depth,alpha,beta);
+			return Min(parent,d1,d2,depth,Integer.MIN_VALUE,Integer.MAX_VALUE);
 		}
 	}
 	
@@ -19,16 +19,17 @@ public class MinimaxTree {
 	public Board Max(Board parent,int d1,int d2,int depth,int alpha, int beta){
 		
 		if(parent.isTerminal() || depth == MAXDEPTH){
-			// telikh kinhsh epistrefw 
+			parent.setValue(parent.evaluate(true));
+			return parent;
 		}
 		
 		Board maxMove = new Board(Integer.MIN_VALUE);
-		children = new ArrayList<Board>(parent.getChildren(d1,d2));
+		children = new ArrayList<Board>(parent.getChildren(parent,d1,d2,true));//paidia tou max (tou pc) 
 		for(Board child : children){
 			Board maxChild =new Board(child);
 			for(int i=0; i<21; i++){
 				Board minChild = new Board(Min(maxChild,luck[i][1],luck[i][2],depth + 1, alpha, beta));
-				if(minChild.getValue() > maxMove.getValue() ){  // TRUE EINAI TO MAVRO
+				if(minChild.getValue() > maxMove.getValue()){  // TRUE EINAI TO MAVRO
 					maxMove.setBoard(minChild.getBoard());
 					maxMove.setValue(minChild.getValue());
 				}
@@ -49,16 +50,17 @@ public class MinimaxTree {
 	public Board Min(Board parent,int d1,int d2,int depth,int alpha, int beta){
 		
 		if(parent.isTerminal() || depth == MAXDEPTH){
-			// telikh kinhsh epistrefw 
+			parent.setValue(parent.evaluate(false));
+			return parent;
 		}
 		
 		Board minMove = new Board(Integer.MAX_VALUE);
-		children = new ArrayList<Board>(parent.getChildren(d1,d2));
+		children = new ArrayList<Board>(parent.getChildren(parent,d1,d2,false));
 		for(Board child : children){
 			Board minChild =new Board(child);
 			for(int i=0; i<21; i++){
 				Board maxChild = new Board(Max(minChild,luck[i][1],luck[i][2],depth + 1, alpha, beta));
-				if(maxChild.getValue() > minMove.getValue() ){
+				if(maxChild.getValue() < minMove.getValue() ){
 					minMove.setBoard(maxChild.getBoard());
 					minMove.setValue(maxChild.getValue());
 				}
