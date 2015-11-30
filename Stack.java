@@ -44,6 +44,12 @@ public class Stack{
 		}
 		return a;
 	}
+	public boolean colorSearch(boolean clr){
+		if(firstNode.isBlack() == clr || lastNode.isBlack() == clr){
+			return true;
+		}
+		return false;
+	}
 	
 	
 }
