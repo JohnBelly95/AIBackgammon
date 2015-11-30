@@ -10,28 +10,38 @@ import javax.imageio.*;
 
 public class Main {
 	private static Dice d6a,d6b;
-	private static Board b;
-	private static int a;
+	private static Board gb;
+	public static int a,b,moves;
 	private static Scanner read = new Scanner(System.in);
 	public static JFrame mFrame = new JFrame("Backgammon");
 	public static JLayeredPane gBoard = new JLayeredPane();
-	private static final String tut = ("Backgammon is one of the oldest board games known.<br>This implementation comes from a Greek variation called \"Πλακωτό\"<br>");
+	private static final String tut = ("Backgammon is one of the oldest board games known.<br>This implementation comes from a Greek variation called \"ΞΒ ΞΒ»ΞΒ±ΞΞΞβ€°Ξβ€ΞοΏ½\"<br>");
 	public static GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 	private static int height = gd.getDisplayMode().getHeight();
 	private static int width = gd.getDisplayMode().getWidth();
 	private static int x = 3*(height/5)-62;
+	private static boolean canGo;
 	static JMenuBar menuBar;
 	static JMenu mainMenu;
 	static JCheckBoxMenuItem debugMode;
 	static BufferedImage img = null;
+	static BufferedImage wCh = null;
+	static BufferedImage bCh = null;
+	public static String playerIn;
+	public static JButton roll;
+	public static JTextField tf;
+	public static JTextArea textArea;
+	public static Scanner sc;
+	public static MiniMaxTree ai;
 	
 	public static void main(String[] args){
 		
-		
+		ai = new MiniMaxTree();
 		d6a = new Dice();
 		d6b = new Dice();
-		b = new Board();
+		gb = new Board();
 		drawMenu();
+		//gb.moveCh(0,13);
 		/*double j=0;
 		for(int i=0;i<1000;i++){
 			j+=d6a.roll() + d6b.roll();
@@ -78,13 +88,14 @@ public class Main {
 		JButton b = new JButton(name);
 		b.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				System.out.println(e.getActionCommand() + " was clicked");
 				//TODO Add action on press.
 				switch(e.getActionCommand()){
 					case "New Game": {
-							System.out.println("This is something");
 							try {
+								//HERE GOES THE GAME CODE. DEAL WITH IT.
 								createBoard();
+								drawBoard(gb);
+								PlayerMove();
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -92,16 +103,14 @@ public class Main {
 							break;
 						}
 					case "Tutorial":{
-							System.out.println("Time to print a tutorial.");
 							drawTutorial();
 							break;
 						}
 					case "Credits":{
-							System.out.println("will code for coffee.");
+							//TODO Add credits.
 							break;
 						}
 					case "Return":{
-							System.out.println("BACK I SAY!");
 							break;
 					}
 					default: System.out.println("This works. I think.");
@@ -121,6 +130,19 @@ public class Main {
 			}
 		});
 		return b;
+	}
+	
+	public static void PlayerMove() throws IOException{
+		tf.setEditable(false);
+		roll.setEnabled(true);
+	}
+	
+	public static void AIMove() throws IOException{
+		System.out.println("FUCK YEAH MOTHERFUCKER!");
+		Board move = ai.expectiMinimax(gb, a, b, 0, true);
+		gb = move;
+		drawBoard(gb);
+		PlayerMove();
 	}
 	
 	public static void drawTutorial(){
@@ -151,7 +173,7 @@ public class Main {
 	
 	public static void createBoard() throws IOException{
 		
-		gBoard.setSize(1024,720);
+		gBoard.setSize(1024,648);
 		
 		menuBar = new JMenuBar();
 		
@@ -161,18 +183,199 @@ public class Main {
 		debugMode = new JCheckBoxMenuItem("Debug Mode");
 		mainMenu.add(debugMode);
 		
-		img = ImageIO.read(new File("board.jpg"));
+		img = ImageIO.read(new File("resources/board.jpg"));
 		BufferedImage resizedImg = resizeImage(img,img.getType());
-		//ImageIO.write(resizedImg, "jpg", new File("boardR.jpg"));
 		JLabel boardPic = new JLabel(new ImageIcon(resizedImg));
 		boardPic.setBounds(((3*(width/5))-((x*145)/100)-15), 0,(x*145)/100, 3*(height/5));
 		
+		JPanel DiceArea = new JPanel(new GridLayout(2,1));
+		JLabel result = new JLabel("Results of die rolls will show here.");
+		roll = new JButton("Roll Dice");
+		roll.setEnabled(false);
+		roll.setBounds(0, 0, 100, 20);
+		DiceArea.add(roll);
+		DiceArea.add(result);
+		roll.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				//TODO Add action on press.
+				a = d6a.roll();
+				b = d6b.roll();
+				if(a==b) moves = 4;
+				else moves =2;
+				result.setText("You rolled: " + a +" and " + b);
+				DiceArea.repaint();
+				tf.setEditable(true);
+				roll.setEnabled(false);
+			}
+		});
+		DiceArea.setBounds(10,50,270,60);
+		
+		JPanel text = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.HORIZONTAL;
+		tf = new JTextField(20);
+		textArea = new JTextArea(5,20);
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		textArea.setEditable(false);
+		//tf.setBounds(10,300,270,270);
+		tf.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String input = tf.getText();
+				textArea.append(input+"\n");
+				tf.selectAll();
+				textArea.setCaretPosition(textArea.getDocument().getLength());
+				sc = new Scanner(input);
+				if(sc.next().equals("move")){
+					int moveSt =  sc.nextInt();
+					int moveFn =  sc.nextInt();
+					if(moveFn-moveSt == a||moveFn-moveSt == b){
+						Board board = null;
+						board = gb;
+						if(board.available(moveSt-1,moveFn-1)) {
+							board.moveCh(moveSt-1, moveFn-1);
+							moves--;
+							textArea.append("Moving checker.\n");
+						}
+						try {
+							drawBoard(board);
+						} catch (IOException e1) {
+							System.out.println("This failed...");
+						}
+					}else textArea.append("Please try again.\nThe distance was equal to one of your dice.\n");
+				}else textArea.append("Please try again.\n The correct command is \"move <Starting Position> <Ending Position>\"\n");
+				if(moves==0){
+					tf.setEditable(false);
+					try {
+						AIMove();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+        text.add(tf, c);
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        text.add(scrollPane, c);
+        text.setBounds(10, 300, 270, 270);
+		
 		menuBar.add(mainMenu);
 		gBoard.add(boardPic);
+		gBoard.setLayer(boardPic,0);
+		gBoard.add(text);
+		gBoard.add(DiceArea);
 		mFrame.setJMenuBar(menuBar);
 		mFrame.setContentPane(gBoard);
 		mFrame.setBounds(width/5,height/5,3*(width/5),3*(height/5));
 		mFrame.setVisible(true);
+	}
+	
+	public static void drawBoard(Board board) throws IOException{
+		Checker token = null;
+		for(int i=0;i<24;i++){
+			int j =0;
+			if(!board.board[i].isEmpty()){
+				token = board.board[i].lastNode;
+				
+				JLabel ch = new JLabel();
+				if(board.board[i].size()<4){
+					while(token != null){
+						if(token.color){
+							ch = blackCh();
+							if(i<6){
+								ch.setBounds(310 + i*63, 505 -j*62, 60, 60);
+							}else if(5<i&&i<12){
+								ch.setBounds(730 + (i%6)*63, 505 -j*62, 60, 60);
+							}else if(11<i&&i<18){
+								ch.setBounds(1050 - (i%6)*63,20 + j*62,60,60);
+							}else if(17<i&&i<24){
+								ch.setBounds(630-(i%6)*63, 20+ j*62, 60, 60);
+							}
+						}else{
+							ch = whiteCh();
+							if(i<6){
+								ch.setBounds(310 + i*63, 505 -j*62, 60, 60);
+							}else if(5<i&&i<12){
+								ch.setBounds(730 + (i%6)*63, 505 -j*62, 60, 60);
+							}else if(11<i&&i<18){
+								ch.setBounds(1050 - (i%6)*63,20 + j*62,60,60);
+							}else if(17<i&&i<24){
+								ch.setBounds(630-(i%6)*63, 20+ j*62, 60, 60);
+							}
+						}
+						gBoard.add(ch);
+						gBoard.setLayer(ch, 1);
+						j++;
+						token = token.nextCh;
+					}
+				}else{
+					if(board.board[i].firstNode.color==board.board[i].lastNode.color){
+						for(int k=0;k<4;k++){
+							if(token.color){
+								ch = blackCh();
+								if(i<6){
+									ch.setBounds(310 + i*63, 505 -j*62, 60, 60);
+								}else if(5<i&&i<12){
+									ch.setBounds(730 + (i%6)*63, 505 -j*62, 60, 60);
+								}else if(11<i&&i<18){
+									ch.setBounds(1050 - (i%6)*63,20 + j*62,60,60);
+								}else if(17<i&&i<24){
+									ch.setBounds(630-(i%6)*63, 20+ j*62, 60, 60);
+								}
+							}else{
+								ch = whiteCh();
+								if(i<6){
+									ch.setBounds(310 + i*63, 505 -j*62, 60, 60);
+								}else if(5<i&&i<12){
+									ch.setBounds(730 + (i%6)*63, 505 -j*62, 60, 60);
+								}else if(11<i&&i<18){
+									ch.setBounds(1050 - (i%6)*63,20 + j*62,60,60);
+								}else if(17<i&&i<24){
+									ch.setBounds(630-(i%6)*63, 20+ j*62, 60, 60);
+								}
+							}
+							gBoard.add(ch);
+							gBoard.setLayer(ch, 1);
+							j++;
+						}
+					}else{
+						for(int k=0;k<4;k++){
+							if(token.color){
+								ch = blackCh();
+								if(i<6){
+									ch.setBounds(310 + i*63, 505 -j*62, 60, 60);
+								}else if(5<i&&i<12){
+									ch.setBounds(730 + (i%6)*63, 505 -j*62, 60, 60);
+								}else if(11<i&&i<18){
+									ch.setBounds(1050 - (i%6)*63,20 + j*62,60,60);
+								}else if(17<i&&i<24){
+									ch.setBounds(630-(i%6)*63, 20+ j*62, 60, 60);
+								}
+							}else{
+								ch = whiteCh();
+								if(i<6){
+									ch.setBounds(310 + i*63, 505 -j*62, 60, 60);
+								}else if(5<i&&i<12){
+									ch.setBounds(730 + (i%6)*63, 505 -j*62, 60, 60);
+								}else if(11<i&&i<18){
+									ch.setBounds(1050 - (i%6)*63,20 + j*62,60,60);
+								}else if(17<i&&i<24){
+									ch.setBounds(630-(i%6)*63, 20+ j*62, 60, 60);
+								}
+							}
+							gBoard.add(ch);
+							gBoard.setLayer(ch, 1);
+							j++;
+						}
+					}
+					//break;
+				}
+			}
+		}
+		gBoard.repaint();
 	}
 	
 	private static BufferedImage resizeImage(BufferedImage originalImage, int type){
@@ -182,6 +385,31 @@ public class Main {
 		g.dispose();
 		return resizedImage;
 	}
+	
+	public static JLabel blackCh() throws IOException{
+		bCh = ImageIO.read(new File("resources/blackCh.jpg"));
+		BufferedImage btoken = new BufferedImage(60,60,bCh.getType());
+		Graphics2D g1 = btoken.createGraphics();
+		g1.drawImage(bCh,0,0,60,60,null);
+		g1.dispose();
+		bCh = btoken;
+		JLabel blackCh = new JLabel(new ImageIcon(bCh));
+		blackCh.setBounds(0,0,60,60);
+		return blackCh;
+	}
+	
+	public static JLabel whiteCh() throws IOException{
+		wCh = ImageIO.read(new File("resources/whiteCh.jpg"));
+		BufferedImage wtoken = new BufferedImage(60,60,wCh.getType());
+		Graphics2D g = wtoken.createGraphics();
+		g.drawImage(wCh,0,0,60,60,null);
+		g.dispose();
+		wCh = wtoken;
+		JLabel whiteCh = new JLabel(new ImageIcon(wCh));
+		whiteCh.setBounds(0,0,65,65);
+		return whiteCh;
+	}
+	
 	/*public State expectiMiniMax(int d1,int d2,boolean color){
 		for(int i=23; i>=0; i--){
 			if(b.board[i].look() != null && b.board[i].look().color == color){

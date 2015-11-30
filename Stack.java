@@ -15,6 +15,9 @@ public class Stack{
 	}
 	
 	public void push(Checker node){
+		if(firstNode == null){
+			firstNode = node;
+		}
 		 node.nextCh = lastNode;
 		 lastNode = node;
 	}
@@ -38,11 +41,19 @@ public class Stack{
 	public int size(){
 		int a=0;
 		node = lastNode;
-		while(node.nextCh != null){
+		while(node != null){
 			a++;
 			node = node.nextCh;
 		}
 		return a;
+	}
+	public boolean colorSearch(boolean clr){
+		if(!this.isEmpty()){
+			if(firstNode.isBlack() == clr || lastNode.isBlack() == clr){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	
