@@ -1,4 +1,4 @@
-
+//Ζαχαριάδης Ιωάννης p3130063 Δελιβοριάς Μάριος p3130050
 public class Checker {
 	int pos;
 	boolean color;

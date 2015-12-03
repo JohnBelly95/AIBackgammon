@@ -1,3 +1,4 @@
+//Ζαχαριάδης Ιωάννης p3130063 Δελιβοριάς Μάριος p3130050
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -20,7 +21,6 @@ public class Main {
 	private static int height = gd.getDisplayMode().getHeight();
 	private static int width = gd.getDisplayMode().getWidth();
 	private static int x = 3*(height/5)-62;
-	private static boolean canGo;
 	static JMenuBar menuBar;
 	static JMenu mainMenu;
 	static JCheckBoxMenuItem debugMode;
@@ -138,7 +138,6 @@ public class Main {
 	}
 	
 	public static void AIMove() throws IOException{
-		System.out.println("FUCK YEAH MOTHERFUCKER!");
 		Board move = ai.expectiMinimax(gb, a, b, 0, true);
 		gb = move;
 		drawBoard(gb);
@@ -227,22 +226,28 @@ public class Main {
 				textArea.setCaretPosition(textArea.getDocument().getLength());
 				sc = new Scanner(input);
 				if(sc.next().equals("move")){
-					int moveSt =  sc.nextInt();
-					int moveFn =  sc.nextInt();
-					if(moveFn-moveSt == a||moveFn-moveSt == b){
-						Board board = null;
-						board = gb;
-						if(board.available(moveSt-1,moveFn-1)) {
-							board.moveCh(moveSt-1, moveFn-1);
-							moves--;
-							textArea.append("Moving checker.\n");
-						}
-						try {
-							drawBoard(board);
-						} catch (IOException e1) {
-							System.out.println("This failed...");
-						}
-					}else textArea.append("Please try again.\nThe distance was equal to one of your dice.\n");
+					int moveSt=0;
+					int moveFn= 0;
+					if(sc.hasNext()){
+						moveSt =  sc.nextInt();
+						if(sc.hasNext()){
+							moveFn =  sc.nextInt();
+						}else textArea.append("Please try again.\n");
+						if(moveFn-moveSt == a||moveFn-moveSt == b){
+							Board board = null;
+							board = gb;
+							if(board.available(moveSt-1,moveFn-1)) {
+								board.moveCh(moveSt-1, moveFn-1);
+								moves--;
+								textArea.append("Moving checker.\n");
+							}
+							try {
+								drawBoard(board);
+							} catch (IOException e1) {
+								System.out.println("This failed...");
+							}
+						}else textArea.append("Please try again.\nThe distance was equal to one of your dice.\n");
+					}else textArea.append("Please try again.\n");
 				}else textArea.append("Please try again.\n The correct command is \"move <Starting Position> <Ending Position>\"\n");
 				if(moves==0){
 					tf.setEditable(false);
@@ -371,10 +376,10 @@ public class Main {
 							j++;
 						}
 					}
-					//break;
 				}
 			}
 		}
+		gBoard.revalidate();
 		gBoard.repaint();
 	}
 	

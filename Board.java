@@ -1,3 +1,4 @@
+//Ζαχαριάδης Ιωάννης p3130063 Δελιβοριάς Μάριος p3130050
 import java.util.ArrayList;
 public class Board {
 	Checker token=null;
@@ -23,11 +24,9 @@ public class Board {
 		}
 	}
 	public Board(Board b){
-		board = b.board;
+		board = new Stack[24];
+		this.board = b.board;
 		this.value = b.value;
-		for(int i=0 ; i<24; i++){
-			board[i] = new Stack();
-		}
 	}
 	
 	
@@ -72,13 +71,15 @@ public class Board {
 			}
 			return true;
 		}else{
-			for(int i=23; i<0; i--){
+			for(int i=23; i>0; i--){
 				if(available(i,i - d)) return false;
 			}
 			return true;
 		}
 	}
 	public boolean available(int stPos, int fnPos){
+		if(board[stPos].isEmpty()) return false;
+		if(stPos<0||fnPos<0||fnPos>23) return false;
 		if((stPos-fnPos)>0 && board[stPos].lastNode.color){
 			if(board[fnPos].isEmpty()){
 				return true;
@@ -105,23 +106,26 @@ public class Board {
 	public int evaluate(boolean clr){
 		int a = 0;
 		if(clr==true){
-			for(int i=24;i>0;i--){
-				if(board[i].firstNode.color && board[i].lastNode.color) {
-					if(board[i].size() > 1 ) a += i*board[i].size() + wDoor;
-					else a -= i*wAlone;
+			for(int i=23;i>0;i--){
+				if(!board[i].isEmpty()){
+					if(board[i].firstNode.color && board[i].lastNode.color) {
+						if(board[i].size() > 1 ) a += i*board[i].size() + wDoor;
+						else a -= i*wAlone;
+					}
+					if(!board[i].firstNode.color && board[i].lastNode.color) a += (25-i)*wLocked;
+					if(board[i].firstNode.color && !board[i].lastNode.color) a += i;
 				}
-				if(!board[i].firstNode.color && board[i].lastNode.color) a += (25-i)*wLocked;
-				if(board[i].firstNode.color && !board[i].lastNode.color) a += i;
 			}
 		}else{
-			for(int i=1;i<25;i++){
-				if(!board[i].firstNode.color && !board[i].lastNode.color) {
-					if(board[i].size() > 1) a -= i*board[i].size() + wDoor;
-					else a += i*wAlone;
+			for(int i=0;i<24;i++){
+				if(!board[i].isEmpty()){
+					if(!board[i].firstNode.color && !board[i].lastNode.color) {
+						if(board[i].size() > 1) a -= i*board[i].size() + wDoor;
+						else a += i*wAlone;
+					}
+					if(board[i].firstNode.color && !board[i].lastNode.color) a -= i*wLocked;
+					if(!board[i].firstNode.color && board[i].lastNode.color) a += (25-i);
 				}
-				if(board[i].firstNode.color && !board[i].lastNode.color) a -= i*wLocked;
-				if(!board[i].firstNode.color && board[i].lastNode.color) a += (25-i);
-				
 			}
 		}
 		return a;
@@ -133,7 +137,7 @@ public class Board {
 			}
 			return true;
 		}else{//maura
-			for(int i=23; i<0; i--){
+			for(int i=23; i>0; i--){
 				if(!board[i].isEmpty() && board[i].colorSearch(clr) && i>5) return false;
 			}
 			return true;
@@ -263,7 +267,7 @@ public class Board {
 				if(parent.noMoreMoves(d1,clr)){
 					return children;
 				}
-				for(int move1=23; move1<0; move1--){//PRWTH KINHSH
+				for(int move1=23; move1>0; move1--){//PRWTH KINHSH
 					Board child1 =new Board(parent);
 					
 					if( (move1 - d1 > 0) && child1.available(move1, move1 - d1)){
@@ -271,7 +275,7 @@ public class Board {
 						child1.setValue(child1.evaluate(clr));
 						children.add(child1);
 						//ean exw prwth kinhsh paw na kanw thn deuterh
-						for(int move2=23; move2<0; move2--){//DEUTERH KINHSH 
+						for(int move2=23; move2>0; move2--){//DEUTERH KINHSH 
 							if(child1.noMoreMoves(d1,clr)){
 								break;
 							}
@@ -282,7 +286,7 @@ public class Board {
 								child2.setValue(child2.evaluate(clr));
 								children.add(child2);
 								// to idio
-								for(int move3=23; move3<0; move3--){//TRITH KINHSH 
+								for(int move3=23; move3>0; move3--){//TRITH KINHSH 
 									if(child2.noMoreMoves(d1,clr)){
 										break;
 									}
@@ -292,7 +296,7 @@ public class Board {
 										child3.setValue(child3.evaluate(clr));
 										children.add(child3);
 										//to idio
-										for(int move4=23; move4<0; move4--){//TETARTH KINHSH
+										for(int move4=23; move4>0; move4--){//TETARTH KINHSH
 											if(child3.noMoreMoves(d1,clr)){
 												break;
 											}
@@ -314,7 +318,7 @@ public class Board {
 				if(parent.noMoreMoves(d1,clr) && parent.noMoreMoves(d2,clr)){//an den mporw na paiksw tis zaries
 					return children;
 				}else if(parent.noMoreMoves(d2,clr)){//an den mporw na paiksw to d2
-					for(int move1=23; move1<0; move1--){//PRWTH KINHSH
+					for(int move1=23; move1>0; move1--){//PRWTH KINHSH
 						Board child1 =new Board(parent);
 						if( (move1 - d1 > 0) && child1.available(move1, move1 - d1)){
 							child1.moveCh(move1, move1 - d1);
@@ -324,7 +328,7 @@ public class Board {
 					}
 					return children;
 				}else if(parent.noMoreMoves(d1,clr)){//an den mporw na paiksw to d1
-					for(int move1=23; move1<0; move1--){//deuterh KINHSH
+					for(int move1=23; move1>0; move1--){//deuterh KINHSH
 						Board child1 =new Board(parent);
 						if( (move1 - d2 > 0) && child1.available(move1, move1 - d1)){
 							child1.moveCh(move1, move1 - d2);
@@ -334,13 +338,13 @@ public class Board {
 					}
 					return children;
 				}else{//an mporw na paiksw kai tis duo zaries
-					for(int move1=23; move1<0; move1--){//prwth  KINHSH
+					for(int move1=23; move1>0; move1--){//prwth  KINHSH
 						Board child1 =new Board(parent);
 						if( (move1 - d1 > 0) && child1.available(move1, move1 - d1)){
 							child1.moveCh(move1, move1 - d1);
 							child1.setValue(child1.evaluate(clr));
 							children.add(child1);
-							for(int move2=23; move2<0; move2--){//prwth  KINHSH
+							for(int move2=23; move2>0; move2--){//prwth  KINHSH
 								Board child2 =new Board(parent);
 								if( (move2 - d1 > 0) && child1.available(move2, move2 - d1)){
 									child2.moveCh(move2, move2 - d1);
@@ -350,7 +354,7 @@ public class Board {
 							}//telos deuterhs kinhshs
 						}
 					}//telos prwths kinhshs
-					for(int move3=23; move3<0; move3--){//h periptwsh pou den mporw na kinhsw ena pouli se d1d2 alla d2d1
+					for(int move3=23; move3>0; move3--){//h periptwsh pou den mporw na kinhsw ena pouli se d1d2 alla d2d1
 						Board child3 =new Board(parent);
 						if( (move3 - d2 - d1 >0) && child3.available(move3, move3 - d2) && child3.available( move3 - d2, move3 - d2 - d1)){
 							child3.moveCh(move3, move3 - d2 - d1);

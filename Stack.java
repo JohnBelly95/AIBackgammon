@@ -1,3 +1,4 @@
+//Ζαχαριάδης Ιωάννης p3130063 Δελιβοριάς Μάριος p3130050
 public class Stack{
 	private Checker node;
 	Checker firstNode;
@@ -26,6 +27,7 @@ public class Stack{
 		if(isEmpty()){
 			//error;
 		}else{
+			if(lastNode == firstNode) firstNode = null;
 			Checker node = lastNode;
 			lastNode = node.nextCh;
 			node.nextCh = null;
@@ -48,7 +50,7 @@ public class Stack{
 		return a;
 	}
 	public boolean colorSearch(boolean clr){
-		if(!this.isEmpty()){
+		if(!isEmpty()){
 			if(firstNode.isBlack() == clr || lastNode.isBlack() == clr){
 				return true;
 			}
